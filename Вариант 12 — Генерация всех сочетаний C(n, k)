@@ -1,0 +1,21 @@
+def combinations(n, k, start=1, current=None, result=None):
+    if current is None:
+        current = []
+    if result is None:
+        result = []
+    
+    # Если выбрано k элементов — добавляем сочетание
+    if len(current) == k:
+        result.append(current[:])
+        return result
+    
+    # Пробуем числа от start до n
+    for i in range(start, n + 1):
+        current.append(i)       # добавляем число
+        combinations(n, k, i + 1, current, result)
+        current.pop()           # откат (backtracking)
+    
+    return result
+
+# Пример
+print(combinations(4, 2))

@@ -1,0 +1,15 @@
+def count_vowels(s, index=0):
+    # Базовый случай — дошли до конца строки
+    if index == len(s):
+        return 0
+    
+    # Определяем, является ли текущий символ гласной
+    vowels = "aeiouаеёиоуыэюяAEIOUАЕЁИОУЫЭЮЯ"
+    is_vowel = 1 if s[index] in vowels else 0
+    
+    # Переходим к следующему символу
+    return is_vowel + count_vowels(s, index + 1)
+
+# Пример
+text = "Привет мир"
+print("Количество гласных:", count_vowels(text))

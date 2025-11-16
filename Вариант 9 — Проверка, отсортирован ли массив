@@ -1,0 +1,15 @@
+def is_sorted(arr, index=0):
+    # Базовый случай — массив длины 0 или 1 всегда отсортирован
+    if index == len(arr) - 1:
+        return True
+    
+    # Если текущий элемент больше следующего — не отсортирован
+    if arr[index] > arr[index + 1]:
+        return False
+    
+    # Проверяем следующий индекс
+    return is_sorted(arr, index + 1)
+
+# Пример
+arr = [1, 2, 3, 4, 5]
+print("Отсортирован?", is_sorted(arr))

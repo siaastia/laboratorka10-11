@@ -1,40 +1,68 @@
-def find_paths(maze, x, y, path, paths):
-    n = len(maze)
+# -------- Генерация всех путей в лабиринте 5×5 ---------
 
-    # Если вне границ или стена — выход
-    if x < 0 or y < 0 or x >= n or y >= n or maze[x][y] == 1:
-        return
-    
-    # Если дошли до цели — сохраняем путь
-    if x == n - 1 and y == n - 1:
-        paths.append(path[:])
-        return
-    
-    # Помечаем клетку как посещённую
-    maze[x][y] = 1
-
-    # Пробуем 4 направления
-    find_paths(maze, x + 1, y, path + ["D"], paths)  # вниз
-    find_paths(maze, x - 1, y, path + ["U"], paths)  # вверх
-    find_paths(maze, x, y + 1, path + ["R"], paths)  # вправо
-    find_paths(maze, x, y - 1, path + ["L"], paths)  # влево
-
-    # Откатываем клетку
-    maze[x][y] = 0
-
-
-# Пример лабиринта 5×5
+# Лабиринт (0 — можно идти, 1 — стена)
 maze = [
     [0, 0, 1, 0, 0],
     [1, 0, 1, 0, 1],
     [0, 0, 0, 0, 0],
-    [0, 1, 1, 1, 0],
+    [1, 0, 1, 1, 0],
     [0, 0, 0, 1, 0]
 ]
 
-paths = []
-find_paths(maze, 0, 0, [], paths)
+# Размер лабиринта
+N = 5
 
-print("Найденные пути:")
-for p in paths:
+# Для хранения всех найденных путей
+all_paths = []
+
+
+def is_valid(x, y, visited):
+    # Проверка: клетка внутри поля и не стена
+    if 0 <= x < N and 0 <= y < N and maze[x][y] == 0 and not visited[x][y]:
+        return True
+    return False
+
+
+def find_paths(x, y, visited, path):
+    # Если дошли до правого нижнего угла — нашли путь
+    if x == N - 1 and y == N - 1:
+        all_paths.append(path[:])  # сохраняем копию пути
+        return
+
+    # Отмечаем клетку как посещённую
+    visited[x][y] = True
+
+    # Возможные шаги: вниз, вправо, вверх, влево
+    moves = [
+        (1, 0, "↓"),
+        (0, 1, "→"),
+        (-1, 0, "↑"),
+        (0, -1, "←")
+    ]
+
+    # Пробуем каждый шаг
+    for dx, dy, symbol in moves:
+        nx, ny = x + dx, y + dy
+
+        # Проверяем, можно ли идти
+        if is_valid(nx, ny, visited):
+            path.append(symbol)     # записываем шаг
+            find_paths(nx, ny, visited, path)  # рекурсивный вызов
+            path.pop()              # откат шага (backtrack)
+
+    # Отмечаем клетку как непосещённую (откат)
+    visited[x][y] = False
+
+
+# Создаём матрицу посещённых клеток
+visited = [[False] * N for _ in range(N)]
+
+# Запускаем поиск путей из (0,0)
+find_paths(0, 0, visited, [])
+
+# ---- Вывод результата ----
+print("Количество найденных путей:", len(all_paths))
+print("Все пути:")
+for p in all_paths:
     print("".join(p))
+
